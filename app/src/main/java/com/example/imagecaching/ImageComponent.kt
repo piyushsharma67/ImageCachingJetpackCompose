@@ -43,15 +43,15 @@ fun ImageComponent(modifier: Modifier = Modifier, imageUrl:String, cache: LruCac
 
     LaunchedEffect(key1 = Unit){
         isLoading = true //before checking setting the loading to true
-        imageBitmap = cache.get(imageUrl) //first checking if the image exists in the memory cache
+        imageBitmap = cache.get(imageUrl) //firstly checking if the image exists in the memory cache
 
         if (imageBitmap == null) {
-            imageBitmap = loadBitmapFromDiskCache(context, imageUrl) // Trying to load image from disk cache
+            imageBitmap = loadBitmapFromDiskCache(context, imageUrl) // Trying to load image from disk cache if it does not exists in memory cache
         }
 
         if (imageBitmap == null) {
             try {
-                val downloadedBitmap = downloadImage(imageUrl) //downloading the image
+                val downloadedBitmap = downloadImage(imageUrl) //downloading the image if not found in cache
                 if (downloadedBitmap != null) {
                     cache.put(imageUrl, downloadedBitmap) // once downloaded saved the image inside the memory cache
                     saveBitmapToDiskCache(context, imageUrl, downloadedBitmap)  // saved the image inside the disk cache
@@ -59,7 +59,7 @@ fun ImageComponent(modifier: Modifier = Modifier, imageUrl:String, cache: LruCac
                 }
             } catch (e: IOException) {
                 isLoading=false
-                error=e.message.toString()
+                error=e.message.toString() // setting the caught error
             }finally {
                 isLoading = false
             }
