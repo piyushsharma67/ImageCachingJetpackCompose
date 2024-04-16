@@ -23,7 +23,7 @@ This project is a Jetpack Compose application that demonstrates image caching us
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/piyushsharma67/ImageCachingJetpackCompose
+   git clone git@github.com:piyushsharma67/ImageCachingJetpackCompose.git //if using ssh
 Open the project in Android Studio.
 
 Build and run the project on an emulator or a physical device.
