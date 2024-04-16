@@ -31,18 +31,20 @@ Build and run the project on an emulator or a physical device.
 📱 Usage
 The application loads images from remote URLs and caches them in memory and disk for faster retrieval in subsequent accesses.
 
-🛠️ Libraries Used
-Jetpack Compose
-Hilt
-Android Architecture Components (ViewModel)
-Kotlin Coroutines
-Picasso (for image loading)
-LruCache
-Material Components for Android
-🤝 Contributing
+## 🛠️ Libraries Used
+
+- **Jetpack Compose**
+- **Hilt**
+- **Android Architecture Components (ViewModel)**
+- **Kotlin Coroutines**
+- **Picasso** (for image loading)
+- **LruCache**
+- **Material Components for Android**
+- **Paging3 for pagination
+
+## 🤝 Contributing
+
 Contributions are welcome! If you find any bugs or have suggestions for improvement, please open an issue or submit a pull request.
 
 📄 License
 This project is licensed under the MIT License.
-
-lua
