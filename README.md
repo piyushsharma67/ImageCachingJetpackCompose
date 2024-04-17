@@ -11,6 +11,7 @@ This project is a Jetpack Compose application that demonstrates image caching us
 - **Disk Cache:** Cache images on disk for persistent storage and faster access.
 - **MVVM Architecture:** Implemented MVVM architecture with ViewModel and Repository pattern.
 - **Dependency Injection:** Utilized Hilt for dependency injection to manage dependencies efficiently.
+- **Retrofit library to make an api call and fetch the data**
 
 ## 📋 Requirements
 
