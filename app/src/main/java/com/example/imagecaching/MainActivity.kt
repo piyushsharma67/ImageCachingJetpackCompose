@@ -2,7 +2,6 @@ package com.example.imagecaching
 
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.collection.LruCache
@@ -66,21 +65,20 @@ fun ImageList(modifier: Modifier, viewModel: MyViewModel, cache: LruCache<String
     val items by viewModel.data.collectAsState()
     var data by remember { mutableStateOf<ApiDataClass?>(null) }
     var errorMessage by remember { mutableStateOf<String?>("") }
-    val loading by remember { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(false) }
 
     when (items) {
         is ApiResponse.Loading -> {
-            // Show loading indicator
-            CircularProgressIndicator()
+            loading=true
         }
         is ApiResponse.Success -> {
-            // Data is available, show the content
+            // Data is available, show the content and turn off the loading
+            loading=false
             data = (items as ApiResponse.Success<ApiDataClass?>).data
-
         }
         is ApiResponse.Error -> {
-            // Error occurred, show an error message
-            Log.d("Error from APi is",(items as ApiResponse.Error<*>).errorMessage)
+            // Error occurred, show an error message and turn off the error
+            loading=false
             errorMessage = (items as ApiResponse.Error<ApiDataClass?>).errorMessage
         }
 
