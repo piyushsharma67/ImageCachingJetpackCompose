@@ -35,12 +35,13 @@ The application loads images from remote URLs and caches them in memory and disk
 
 - **Jetpack Compose**
 - **Hilt**
+- **Retrofit**
 - **Android Architecture Components (ViewModel)**
 - **Kotlin Coroutines**
 - **Picasso** (for image loading)
 - **LruCache**
 - **Material Components for Android**
-- **Paging3 for pagination
+- **Disk cache**
 
 ## 🤝 Contributing
 
