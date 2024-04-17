@@ -1,7 +1,6 @@
 package com.example.imagecaching
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.collection.LruCache
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -25,8 +24,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.IOException
-
 
 @Composable
 fun ImageComponent(modifier: Modifier = Modifier, imageUrl:String, cache: LruCache<String, Bitmap>){
@@ -41,29 +41,43 @@ fun ImageComponent(modifier: Modifier = Modifier, imageUrl:String, cache: LruCac
     //** application context which is required to access android resources like FileSystem,roomDB,Retrofit.
     val context = LocalContext.current.applicationContext
 
+    fun createThumbnail(fullSizeBitmap: Bitmap): Bitmap {
+        val thumbnailSize = 200
+        return Bitmap.createScaledBitmap(fullSizeBitmap, thumbnailSize, thumbnailSize, false)
+    }
+
     LaunchedEffect(key1 = Unit){
         isLoading = true //before checking setting the loading to true
-        imageBitmap = cache.get(imageUrl) //firstly checking if the image exists in the memory cache
+        try {
+           withContext(Dispatchers.IO){// dispatched a coroutine on I/O thread
+               imageBitmap = cache.get(imageUrl) //firstly checking if the image exists in the memory cache
 
-        if (imageBitmap == null) {
-            imageBitmap = loadBitmapFromDiskCache(context, imageUrl) // Trying to load image from disk cache if it does not exists in memory cache
-        }
+               if (imageBitmap == null) {
+                   imageBitmap = loadBitmapFromDiskCache(context, imageUrl) // Trying to load image from disk cache if it does not exists in memory cache
+               }
 
-        if (imageBitmap == null) {
-            try {
-                val downloadedBitmap = downloadImage(imageUrl) //downloading the image if not found in cache
-                if (downloadedBitmap != null) {
-                    cache.put(imageUrl, downloadedBitmap) // once downloaded saved the image inside the memory cache
-                    saveBitmapToDiskCache(context, imageUrl, downloadedBitmap)  // saved the image inside the disk cache
-                    imageBitmap = downloadedBitmap
-                }
-            } catch (e: IOException) {
-                isLoading=false
-                error=e.message.toString() // setting the caught error
-            }finally {
-                isLoading = false
-            }
-        }else{
+               if (imageBitmap == null) {
+
+                   val downloadedBitmap = downloadImage(imageUrl)//downloading the image if not found in cache
+                   val bitmap = downloadedBitmap?.let { createThumbnail(it) } //created a thumbnail of small size from the image to optimiser  storage
+
+                   if (downloadedBitmap != null) {
+                       if (bitmap != null) {
+                           cache.put(imageUrl, bitmap)
+                       } // once downloaded saved the image inside the memory cache
+                       if (bitmap != null) {
+                           saveBitmapToDiskCache(context, imageUrl, bitmap)
+                       }  // saved the image inside the disk cache
+                       imageBitmap = bitmap
+                   }
+               }else{
+                   isLoading = false
+               }
+           }
+        } catch (e: IOException) {
+            isLoading=false
+            error=e.message.toString() // setting the caught error
+        }finally {
             isLoading = false
         }
     }

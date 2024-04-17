@@ -74,21 +74,26 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.44")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0")
 
-    val paging_version = "3.2.1"
-    implementation ("androidx.paging:paging-runtime:$paging_version")
-    implementation( "androidx.paging:paging-compose:$paging_version")
+    val pagingVersion = "3.2.1"
+    val lifecycleVersion = "2.7.0"
+    val retrofitVersion="2.11.0"
 
-
-    val lifecycle_version = "2.7.0"
+    implementation ("androidx.paging:paging-runtime:$pagingVersion")
+    implementation( "androidx.paging:paging-compose:$pagingVersion")
 
     // ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     // ViewModel utilities for Compose
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
     // Lifecycle utilities for Compose
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
     // Saved state module for ViewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycleVersion")
+
+    //retrofit library
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+
 }
 
 kapt {

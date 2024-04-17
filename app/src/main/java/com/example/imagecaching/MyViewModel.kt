@@ -1,4 +1,6 @@
 package com.example.imagecaching
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -6,6 +8,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.example.imagecaching.apiDataClass.ApiDataClass
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,21 +20,14 @@ import javax.inject.Inject
 @HiltViewModel
 class MyViewModel @Inject constructor(private val repository: DataRepository):ViewModel(){
 
-    private var currentPage = 1
+    val data:StateFlow<ApiResponse<ApiDataClass?>> =repository.data
 
-    fun getImages(): Flow<PagingData<String>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = PAGE_SIZE,
-                enablePlaceholders = false // Depending on your use case, you may want to change this
-            ),
-            pagingSourceFactory = { ImagePagingSource(repository) }
-        ).flow.map { it ->
-            it
-        }
+    init {
+        getImages()
     }
-
-    companion object {
-        private const val PAGE_SIZE = 10
+    private fun getImages() {
+        viewModelScope.launch {
+            repository.getImages()
+        }
     }
 }

@@ -1,35 +1,41 @@
 package com.example.imagecaching
 
+import android.util.Log
+import androidx.compose.runtime.MutableState
+import com.example.imagecaching.api.Api
+import com.example.imagecaching.apiDataClass.ApiDataClass
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DataRepository @Inject constructor() {
+class DataRepository @Inject constructor(private val apiService:Api) {
 
-    //function which would mimic a API call and return a list of url addresses
-    suspend fun getImages(): List<String> {
-        delay(2000)
+    private val _data=MutableStateFlow<ApiResponse<ApiDataClass?>>(ApiResponse.Loading)
+    val data:StateFlow<ApiResponse<ApiDataClass?>> =_data
 
-        //deliberately provided a incorrect url at 0 index to mimic error message.
+    companion object{
+        const val LIMIT=100
+    }
 
-        val images=mutableListOf(
-                "https://molo17.com/wp-content/uploads/2021/11/StudioCompos", //
-        "https://static.platzi.com/media/user_upload/Jetpack_logo-2-04c3fdd5-545c-4881-a2cd-2f5d1d9b4299.jpg",
-        "https://naps.com.mx/blog/wp-content/uploads/2022/10/curso-gratuito-android-jetpack.jpg",
-        "https://molo17.com/wp-content/uploads/2021/11/StudioCompose1",
-        "https://static.platzi.com/media/user_upload/Jetpack_logo-2-04c3fdd5-545c-4881-a2cd-2f5d1d9b4299.jpg",
-        "https://naps.com.mx/blog/wp-content/uploads/2022/10/curso-gratuito-android-jetpack.jpg",
-        "https://molo17.com/wp-content/uploads/2021/11/StudioCompose10.jpg",
-        "https://static.platzi.com/media/user_upload/Jetpack_logo-2-04c3fdd5-545c-4881-a2cd-2f5d1d9b4299.jpg",
-        "https://naps.com.mx/blog/wp-content/uploads/2022/10/curso-gratuito-android-jetpack.jpg",
-        "https://molo17.com/wp-content/uploads/2021/11/StudioCompose10.jpg",
-        "https://static.platzi.com/media/user_upload/Jetpack_logo-2-04c3fdd5-545c-4881-a2cd-2f5d1d9b4299.jpg",
-        "https://naps.com.mx/blog/wp-content/uploads/2022/10/curso-gratuito-android-jetpack.jpg"
-        )
+    //function which returns the data from the API
 
-        images.shuffle()
+    suspend fun getImages() {
 
-        return images
+       try{
+           val apiData= apiService.getPosts(LIMIT)
+           if (apiData.isSuccessful) {
+               _data.value=ApiResponse.Success(apiData.body())
+           } else {
+               // Handle error, maybe log it or return null
+              throw Exception("Error occurred fetching data")
+           }
+       }catch (error:IOException){
+           Log.d("Errror is",error.message.toString())
+           _data.value=ApiResponse.Error(error.message.toString())
+       }
     }
 }
